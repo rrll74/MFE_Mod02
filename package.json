@@ -1,0 +1,14 @@
+{
+  "name": "mfe_mod02",
+  "version": "1.0.0",
+  "description": "Ejercicios del Módulo 2 del Master de Front-End",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.2.2"
+  }
+}
