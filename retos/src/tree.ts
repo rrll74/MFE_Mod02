@@ -22,6 +22,7 @@ class Tree {
   // Implementada función para probar estructura.
   // Para su correcto funcionamiento habría que crear todos los métodos
   // de inserción, mofificación, eliminación, recorrido y búsqueda en el árbol, junto a su visualización de hojas.
+
   addSon(info: Hoja) {
     const son: Nodo = {
       father: this.tree,

@@ -10,9 +10,10 @@ const triggers = [
   async () => await showMessage([100, "second"]),
 ];
 
-const run = (triggers) => {
-  console.log("third", "second", "first");  // Demasiado simplote ¿MAL?
-  // triggers.forEach((t) => t());
+const run = async (triggers) => {
+  const data1 = await triggers[0]();
+  const data2 = await triggers[1]();
+  console.log("first");
 };
 
 run(triggers);
