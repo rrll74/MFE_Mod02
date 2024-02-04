@@ -1,13 +1,13 @@
 class Morse {
   public phrase: string;
-  private traduction: string = "";
   private tempRef: number = 50;
+  private silence: string = " ";
   private timing = {
     ".": 1,
     "-": 3,
-    sepBasica: 1,
-    sepLetra: 3,
-    sepPalabra: 7,
+    basicSep: 1,
+    letterSep: 3,
+    wordSep: 7,
   };
   private morseAlphabet = {
     "0": "-----",
@@ -59,53 +59,52 @@ class Morse {
 
   constructor(phrase: string) {
     this.phrase = phrase;
-    this.mostrarSenial(false);
+    this.showSignal(false);
   }
 
-  private mostrarSenial(encendido: boolean) {
-    console.log(encendido ? "ON" : "OFF");
+  private showSignal(connected: boolean) {
+    console.log(connected ? "ON" : "OFF");
   }
 
-  private esperarTiempo = (time: number, callback: Function) => {
-    const tToWait = time * this.tempRef;
+  private waitTime = (callback: Function) => {
+    const tToWait = this.tempRef;
     setTimeout(() => callback(tToWait), tToWait);
   };
 
-  private enviarSenial = (time: number, encendido: boolean) => {
-    if (encendido) this.mostrarSenial(encendido);
+  private sendSignal = (signal: string) => {
+    this.showSignal(signal !== this.silence);
     return new Promise((resolve, _reject) => {
-      this.esperarTiempo(time, resolve);
-      if (encendido) this.mostrarSenial(false);
+      this.waitTime(resolve);
     });
   };
 
-  private enviarLetra = (letra: string) => {
-    // console.log(letra);
-    return new Promise(async (resolve, reject) => {
-      const traduction: string = this.morseAlphabet[letra];
-      //console.log(traduction);
-      for (const i of traduction) {
-        //console.log(letra, i);
-        await this.enviarSenial(this.timing[i], true);
-        //console.log("separación de señal");
-        await this.enviarSenial(this.timing.sepBasica, false);
-      }
-      //console.log("separación de letras");
-      await this.enviarSenial(this.timing.sepLetra, false);
-    });
-  };
-
-  traduce = async () => {
+  private traduce = () => {
+    let traduction: string = "";
     for (const i of this.phrase) {
-      if (i === " ") {
-        //console.log("separación de palabras");
-        await this.enviarSenial(this.timing.sepPalabra, false);
+      if (i === this.silence) {
+        traduction += this.silence.repeat(this.timing.wordSep);
       } else {
-        this.enviarLetra(i.toLowerCase());
+        const tradLetter: string = this.morseAlphabet[i.toLowerCase()];
+        console.log(i.toLowerCase(), tradLetter);
+        for (const j of tradLetter) {
+          const timeToWait = this.timing[j];
+          traduction +=
+            ".".repeat(timeToWait) + this.silence.repeat(this.timing.basicSep);
+        }
+        traduction += this.silence.repeat(this.timing.letterSep);
       }
+    }
+    return traduction;
+  };
+
+  send = async () => {
+    const textTraduced: string = this.traduce();
+    console.log(textTraduced);
+    for (const i of textTraduced) {
+      await this.sendSignal(i);
     }
   };
 }
 
-const texto = new Morse("Esta frase.");
-texto.traduce().then();
+const texto = new Morse("Lemoncode morse text!");
+texto.send();
